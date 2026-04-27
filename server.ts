@@ -12,13 +12,20 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+// Default to 8080 which is common for cloud platforms like EdgeOne/Vercel/etc
+const port = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ 关键错误: 环境变量 VITE_SUPABASE_URL 或 VITE_SUPABASE_ANON_KEY 未配置');
+  console.error('请在部署平台的环境变量中设置它们。');
+}
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Memory store for captchas (in production use Redis or similar)
